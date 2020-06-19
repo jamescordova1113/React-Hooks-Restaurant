@@ -6,7 +6,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const config = require('./config');
 
-const route = require('./routes/index.route');
+const route = require('./routes/indexRoute');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongoURL, {
@@ -17,7 +17,7 @@ mongoose.connect(config.mongoURL, {
 
 const app = express();
 app.use(cors());
-  
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -38,7 +38,7 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   // render the error page
-  res.status(err.status || 500).jsno({
+  res.status(err.status || 500).json({
     message:err.message,
     stack: req.app.get('env') === 'development' ? err : {}
   });
