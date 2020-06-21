@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const ROLES = require('../constants/role');
 const config = require('../config');
 const bcrypt = require('bcrypt');
+const Joi = require('joi');
 
 const UserSchema = new mongoose.Schema({
   firstName: {
@@ -30,7 +31,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 3,
-    maxlength: 100,
+    maxlength: 50,
   },
   role: {
     type: String,
@@ -39,7 +40,7 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-UserSchema.method.generateAuthToken = function generateAuthToken() {
+UserSchema.methods.generateAuthToken = function generateAuthToken() {
   const token = jwt.sign({_id: this._id, role: this.role}, config.jwtSecret, { expriesIn: config.jwtExpires });
   return token;
 }
@@ -50,8 +51,8 @@ UserSchema.methods.encryptPassword = async password => {
   return hash;
 };
 
-UserSchema.methods.isPasswordValid = async function(password) {
-  return await bcrypt.compare(password, this.password);
+UserSchema.methods.isPasswordValid = function isPasswordValid(password) {
+  return bcrypt.compareSync(password, this.password);
 }
 
 UserSchema.pre('save', function (next) {
@@ -65,4 +66,30 @@ UserSchema.pre('save', function (next) {
 
 const User = mongoose.model('User', UserSchema);
 
-exports.user = User;
+const validateUser = (user) => {
+  const schema = {
+    firstName: Joi.string().min(3).max(50).required(),
+    lastName: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(50).required().email(),
+    password: Joi.string().min(3).max(50).required(),
+    role: Joi.string().min(3).max(10).required().default(ROLES.USER)
+  };
+
+  return Joi.validate(user, schema);
+}
+
+const validateUpdateUser = (user) => {
+  const schema = {
+    firstName: Joi.string().min(3).max(50).required(),
+    lastName: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(50).required().email(),
+    password: Joi.string().min(3).max(50).required(),
+    role: Joi.string().min(3).max(10).required().default(ROLES.USER)
+  };
+
+  return Joi.validate(user, schema);
+}
+
+exports.User = User;
+exports.validateUser = validateUser;
+exports.validateUpdateUser = validateUpdateUser;

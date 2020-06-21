@@ -3,6 +3,7 @@ const config = require('../config');
 
 module.exports = (req, res, next) => {
   const header = req.headers["x-access-token"] || req.headers["authorization"];
+
   if (!header) {
     return res.status(401).send("Access denied. No token provided.");
   }

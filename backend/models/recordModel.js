@@ -7,12 +7,12 @@ const recordSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 50
   },
-  startdate: {
+  startDate: {
     type: Date,
     required: true,
     default: new Date()
   },
-  enddate: {
+  endDate: {
     type: Date,
     required: true,
     default: new Date()

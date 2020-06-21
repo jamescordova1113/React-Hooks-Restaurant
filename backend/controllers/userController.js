@@ -2,6 +2,15 @@ const config = require('../config');
 const User = require('../models/userModel');
 const Roles = require('../constants/role');
 
+list = async (req, res, next) => {
+  try {
+    const users = await User.find({});
+    res.json({users});
+  } catch (error) {
+    next(error);
+  }
+}
+
 create = async (req, res, next) => {
   try {
     const { 
@@ -29,5 +38,6 @@ create = async (req, res, next) => {
 }
 
 module.exports = {
+  list,
   create
 };

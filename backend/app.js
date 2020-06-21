@@ -30,18 +30,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', route);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  // next(new APIError('API not Found', 404));
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  // render the error page
-  res.status(err.status || 500).json({
-    message:err.message,
-    stack: req.app.get('env') === 'development' ? err : {}
-  });
+app.listen(8000, (error) => {
+  if (error) {
+    return console.log(error.message);
+  }
+  console.log("Listening on port 8000");
 });
 
 module.exports = app;
