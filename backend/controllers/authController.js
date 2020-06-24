@@ -3,12 +3,11 @@ const { User, validateUser, validateUpdateUser } = require("../models/userModel"
 signIn = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-
     if (!user) {
       return res.status(404).send("User not found");
     }
 
-    if (user.isPasswordValid(req.body.isPasswordValid)) {
+    if (user.isPasswordValid(req.body.password)) {
       const token = user.generateAuthToken();
       res.json({
         info: {
@@ -36,20 +35,20 @@ signUp = async (req, res, next) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    const user = await User.findOne({ _id: req.user._id });
+    let user = await User.findOne({ email: req.body.email });
     if (user) {
-      return res.status(400).send("User already existed");
+     return res.status(400).send("User already existed");
     }
-
+   
     user = new User({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
     });
-    const signedUser = await user.save();
 
-    res.send({signedUser});
+    const newUser = await user.save();
+    res.send({newUser});
   } catch (error) {
     res.status(500).send("Internal server error");
   }
@@ -62,10 +61,9 @@ updateProfile = async (req, res, next) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    const user = await User.findOne({ _id: req.user._id });
+    const user = await User.findOne({ _id: req.body._id });
     Object.assign(user, req.body);
     user.role = req.user.role;
-    const role = req.user.role;
     const updatedUser = await user.save();
     const token = updatedUser.generateAuthToken();
     res.json({
@@ -83,7 +81,7 @@ updateProfile = async (req, res, next) => {
   }
 };
 
-exports.module = {
+module.exports = {
   signIn,
   signUp,
   updateProfile

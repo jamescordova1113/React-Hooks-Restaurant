@@ -40,28 +40,29 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+
 UserSchema.methods.generateAuthToken = function generateAuthToken() {
-  const token = jwt.sign({_id: this._id, role: this.role}, config.jwtSecret, { expriesIn: config.jwtExpires });
-  return token;
+  const token = jwt.sign({_id: this._id, role: this.role}, config.jwtSecret, { expiresIn: config.jwtExpires });
+	return token;
 }
 
-UserSchema.methods.encryptPassword = async password => {
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
+UserSchema.methods.encryptPassword = (password) => {
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
   return hash;
 };
 
 UserSchema.methods.isPasswordValid = function isPasswordValid(password) {
-  return bcrypt.compareSync(password, this.password);
+	return bcrypt.compareSync(password, this.password);
 }
 
-UserSchema.pre('save', function (next) {
-  if (this.password && this.isModified('password')) {
-    this.password = this.encryptPassword(this.password);
-    next();
-  } else {
-    next();
-  }
+UserSchema.pre("save", function (next) {
+	if(this.password && this.isModified('password')) {
+		this.password = this.encryptPassword(this.password);
+		next();
+	} else {
+		next();
+	}
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -71,8 +72,7 @@ const validateUser = (user) => {
     firstName: Joi.string().min(3).max(50).required(),
     lastName: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required().email(),
-    password: Joi.string().min(3).max(50).required(),
-    role: Joi.string().min(3).max(10).required().default(ROLES.USER)
+    password: Joi.string().min(3).max(50).required()
   };
 
   return Joi.validate(user, schema);
@@ -83,8 +83,7 @@ const validateUpdateUser = (user) => {
     firstName: Joi.string().min(3).max(50).required(),
     lastName: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required().email(),
-    password: Joi.string().min(3).max(50).required(),
-    role: Joi.string().min(3).max(10).required().default(ROLES.USER)
+    password: Joi.string().min(3).max(50).required()
   };
 
   return Joi.validate(user, schema);
