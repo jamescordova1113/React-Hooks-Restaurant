@@ -29,7 +29,6 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
     minlength: 3,
     maxlength: 50,
   },
@@ -63,7 +62,7 @@ UserSchema.pre("save", function (next) {
 	} else {
 		next();
 	}
-});
+}); 
 
 const User = mongoose.model('User', UserSchema);
 
@@ -72,7 +71,8 @@ const validateUser = (user) => {
     firstName: Joi.string().min(3).max(50).required(),
     lastName: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required().email(),
-    password: Joi.string().min(3).max(50).required()
+    password: Joi.string().min(3).max(100).required(),
+    role: Joi.string().optional(),
   };
 
   return Joi.validate(user, schema);
@@ -83,7 +83,8 @@ const validateUpdateUser = (user) => {
     firstName: Joi.string().min(3).max(50).required(),
     lastName: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required().email(),
-    password: Joi.string().min(3).max(50).required()
+    password: Joi.string().min(3).max(100).optional(),
+    role: Joi.string().optional(),
   };
 
   return Joi.validate(user, schema);

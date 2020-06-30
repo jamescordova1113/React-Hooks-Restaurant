@@ -33,10 +33,11 @@ const planSchema = new mongoose.Schema({
 
 const validatePlan = (plan) => {
   const schema = {
-    date: Joi.date().required().default(Date.now()),
-    hour: Joi.number().required().min(1).max(24).default(0),
-    note: Joi.string().optional().default(''),
-    user: Joi.objectId().required(),
+    destination: Joi.string().min(1).max(50).required(),
+    startDate: Joi.date().required().default(Date.now()),
+    endDate: Joi.date().required().default(Date.now()),
+    comment: Joi.string().min(1).max(50).required(),
+    userId: Joi.objectId().required(),
   };
 
   return Joi.validate(plan, schema);
@@ -44,10 +45,11 @@ const validatePlan = (plan) => {
 
 const validateUpdatePlan = (plan) => {
   const schema = {
-    date: Joi.date().optional(),
-    hour: Joi.number().optional().min(1).max(24),
-    note: Joi.string().optional(),
-    user: Joi.objectId().required(),
+    destination: Joi.string().min(1).max(50).optional(),
+    startDate: Joi.date().required().default(Date.now()),
+    endDate: Joi.date().required().default(Date.now()),
+    comment: Joi.string().min(1).max(50).optional(),
+    userId: Joi.objectId().optional(),
   };
 
   return Joi.validate(plan, schema);
