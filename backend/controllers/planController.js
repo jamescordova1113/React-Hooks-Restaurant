@@ -52,7 +52,6 @@ update = async (req, res, next) => {
     let plan;
     plan = await Plan.findById(planId);
     Object.assign(plan, req.body);
-    console.log(plan);
     const updatedPlan = await plan.save();
     res.json(updatedPlan);
   } catch (error) {
@@ -60,28 +59,23 @@ update = async (req, res, next) => {
   }
 }
 
-function futureList(req, res, next) {
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
-  const nextFirstDay = new Date(year, month, 1);
-  const nextLastDay = new Date(year, month + 1, 1);
+futureList = async (req, res, next) => {
+  try {
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth() + 1;
+    const nextFirstDay = new Date(year, month, 1);
+    const nextLastDay = new Date(year, month + 1, 1);
+    let query = { userId: req.query[0], startDate: { $gte: nextFirstDay, $lt: nextLastDay }};
 
-  let query = { userId: req.query._id, startDate: { $gte: nextFirstDay, $lt: nextLastDay }};
-
-  Plan.find(query)
-    .sort({ startDate: 1 })
-    .then((records) => {
-      if (!records) {
-        return res.status(404).send('Plan is not created');
-      }
-      Plan.find(query)
-      .then((newUsers) => {
-        res.json({
-          'plan': records
-        })
+    Plan.find(query)
+      .then((plan) => {
+        console.log(plan);
+        res.json({plan});
       })
-    })
-    .catch(next);
+      .catch(next);
+  } catch (error) {
+    next (error);
+  }
 }
 
 module.exports = {
