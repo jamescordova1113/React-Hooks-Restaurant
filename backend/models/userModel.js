@@ -71,7 +71,7 @@ const validateUser = (user) => {
     firstName: Joi.string().min(3).max(50).required(),
     lastName: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required().email(),
-    password: Joi.string().min(3).max(100).required(),
+    password: Joi.string().optional(),
     role: Joi.string().optional(),
   };
 
@@ -80,10 +80,10 @@ const validateUser = (user) => {
 
 const validateUpdateUser = (user) => {
   const schema = {
-    firstName: Joi.string().min(3).max(50).required(),
-    lastName: Joi.string().min(3).max(50).required(),
-    email: Joi.string().min(3).max(50).required().email(),
-    password: Joi.string().min(3).max(100).optional(),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    email: Joi.string().required().email(),
+    password: Joi.string().optional(),
     role: Joi.string().optional(),
   };
 

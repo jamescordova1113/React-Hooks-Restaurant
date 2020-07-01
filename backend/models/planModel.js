@@ -37,7 +37,7 @@ const validatePlan = (plan) => {
     startDate: Joi.date().required().default(Date.now()),
     endDate: Joi.date().required().default(Date.now()),
     comment: Joi.string().min(1).max(50).required(),
-    userId: Joi.objectId().required(),
+    userId: Joi.objectId().optional(),
   };
 
   return Joi.validate(plan, schema);
@@ -46,10 +46,9 @@ const validatePlan = (plan) => {
 const validateUpdatePlan = (plan) => {
   const schema = {
     destination: Joi.string().min(1).max(50).optional(),
-    startDate: Joi.date().required().default(Date.now()),
-    endDate: Joi.date().required().default(Date.now()),
+    startDate: Joi.date().optional().default(Date.now()),
+    endDate: Joi.date().optional().default(Date.now()),
     comment: Joi.string().min(1).max(50).optional(),
-    userId: Joi.objectId().optional(),
   };
 
   return Joi.validate(plan, schema);

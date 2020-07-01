@@ -12,10 +12,10 @@ list = async (req, res, next) => {
     } else if (req.user.role === Roles.ADMIN) {
       where = { _id: {$ne: req.user._id} };
     }
-    
+
     const userlist = await User
       .find(where)
-      .skip(parseInt(currentPage * listCount))
+      .skip(parseInt((currentPage) * listCount))
       .limit(parseInt(listCount))
       .select('-password');
    
@@ -62,7 +62,7 @@ update = async (req, res, next) => {
     if (!req.body.password) {
       user = await User.findById(userId).select("-password");
     } else {
-      user = await User.findById(userId);
+      user = await User.findById(userId)
     }
 
     Object.assign(user, req.body);

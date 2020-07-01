@@ -18,14 +18,42 @@ create = async (req, res, next) => {
 
 list = async (req, res, next) => {
   try {
-    let { currentPage, listCount } = req.query;
-    let where = {userId: req.query._id};
+    let {  
+      startDateFilter, 
+      endDateFilter, 
+      destinationFilter, 
+      currentPage, 
+      listCount } = req.query;
+
+    let where = {
+      // userId: req.query._id, 
+      // startDate: { $gte: startDateFilter || null }, 
+      // endDate: { $lte: endDateFilter || null },
+      // destination: { $regex: destinationFilter, $options: 'i' }
+    };
+    if(req.query._id) {
+      where.userId = req.query._id;
+    }
+
+    if(startDateFilter) {
+      where.startDate = { $gte: new Date(startDateFilter) };
+    }
+
+    if(destinationFilter) {
+      where.destination = new RegExp(destinationFilter, "i");
+    }
+
+    if(endDateFilter) {
+      where.endDate = { $lte: new Date(endDateFilter) };
+    }
+
     const plans = await Plan
       .find(where)
       .skip(parseInt(currentPage * listCount))
       .limit(parseInt(listCount));
 
     const totalCount = await Plan.countDocuments(where);
+
     res.json({plans, listCount, totalCount, currentPage});
   } catch (error) {
     next(error);
@@ -43,7 +71,7 @@ remove = async (req, res, next) => {
 
 update = async (req, res, next) => {
   try {
-    const { error } = validateUpdatePlan(req.body);
+    const { error } = validatePlan(req.body);
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
@@ -69,11 +97,10 @@ futureList = async (req, res, next) => {
 
     Plan.find(query)
       .then((plan) => {
-        console.log(plan);
         res.json({plan});
       })
       .catch(next);
-  } catch (error) {
+  } catch (error) {booo
     next (error);
   }
 }
